@@ -1,0 +1,56 @@
+if(permissionGranted){
+    pickCamera();
+}
+
+Uri cam_uri;
+
+public void pickCamera() {
+    ContentValues values = new ContentValues();
+    values.put(MediaStore.Images.Media.TITLE, "New Picture");
+    values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+    cam_uri = requireContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cam_uri);
+
+    //startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE); // OLD WAY
+    startCamera.launch(cameraIntent); // VERY NEW WAY
+}
+
+
+
+
+
+
+
+ActivityResultLauncher<Intent> startCamera = registerForActivityResult(
+    new ActivityResultContracts.StartActivityForResult(),
+    new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == RESULT_OK) {
+                // There are no request codes
+                mImageView.setImageURI(cam_uri);
+                }
+            }
+        }
+ );
+
+
+
+
+
+
+or 
+
+
+
+
+ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+    new ActivityResultContracts.TakePicture(),
+    new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+           // stuff here                  
+        }
+    }
+);
